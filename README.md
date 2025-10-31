@@ -1,23 +1,41 @@
-# mini-rag
+# HR-ToolKit
 
-This is a minimal implementation of the RAG model for question answering.
+This project showcases a domain-specific conversational AI system designed to interact with customers about product features and forecast new product prices. The system was developed during a 6-month internship at Samsung Innovation Campus, focusing on balancing accuracy and efficiency under strict computational constraints.
 
-## The Course
+# Overview
 
-This is an educational project where all of the codes where explained (step by step) via a set of `Arabic` youtube videos. Please check the list:
+The goal was to build a conversational model that could:
 
-| # | Title                                    | Link                                                                                                 | Codes                                              |
-|---|------------------------------------------|------------------------------------------------------------------------------------------------------|----------------------------------------------------|
-| 1 | About the Course ماذا ولمـــاذا          | [Video](https://www.youtube.com/watch?v=Vv6e2Rb1Q6w&list=PLvLvlVqNQGHCUR2p0b8a0QpVjDUg50wQj)         | NA                                                 |
-| 2 | What will we build ماذا سنبنى في المشروع | [Video](https://www.youtube.com/watch?v=_l5S5CdxE-Q&list=PLvLvlVqNQGHCUR2p0b8a0QpVjDUg50wQj&index=2) | NA                                                 |
-| 3 | Setup your tools الأدوات الأساسية        | [Video](https://www.youtube.com/watch?v=VSFbkFRAT4w&list=PLvLvlVqNQGHCUR2p0b8a0QpVjDUg50wQj&index=3) | NA                                                 |
-| 4 | Project Architecture                     | [Video](https://www.youtube.com/watch?v=Ei_nBwBbFUQ&list=PLvLvlVqNQGHCUR2p0b8a0QpVjDUg50wQj&index=4) | [branch](https://github.com/bakrianoo/mini-rag/tree/tut-001) |
-| 5 | Welcome to FastAPI                       | [Video](https://www.youtube.com/watch?v=cpOuCdzN_Mo&list=PLvLvlVqNQGHCUR2p0b8a0QpVjDUg50wQj&index=5) | [branch](https://github.com/bakrianoo/mini-rag/tree/tut-002) |
-| 6 | Nested Routes + Env Values               | [Video](https://www.youtube.com/watch?v=CrR2Bz2Y7Hw&list=PLvLvlVqNQGHCUR2p0b8a0QpVjDUg50wQj&index=6) | [branch](https://github.com/bakrianoo/mini-rag/tree/tut-003) |
-| 7 | Uploading a File                         | [Video](https://www.youtube.com/watch?v=5alMKCbFqWs&list=PLvLvlVqNQGHCUR2p0b8a0QpVjDUg50wQj&index=7) | [branch](https://github.com/bakrianoo/mini-rag/tree/tut-004) |
+Understand product-related queries (e.g., comparing models, explaining specs, etc.)
 
+Predict future product prices based on historical data and market trends.
 
+Operate efficiently on limited GPU memory resources (Google Colab’s A100).
 
+To achieve this, the project explored:
+
+4-bit quantization using QLoRA
+
+Fine-tuning vs. RAG (Retrieval-Augmented Generation)
+
+Performance–efficiency trade-offs for domain-specific NLP tasks
+
+# Key Features
+
+Conversational Interface — Handles natural queries about product specifications, comparisons, and recommendations.
+
+Price Forecasting Module — Predicts new product prices using domain patterns captured during training.
+
+Quantization with QLoRA — Reduced model memory usage from 32 GB → 8 GB with negligible accuracy loss.
+
+Custom Fine-Tuning — Optimized model performance using AdamW, rank = 32, alpha = 64 configuration.
+
+Comparative Study — Evaluated Fine-Tuning vs. RAG-based retrieval, demonstrating the strength of targeted fine-tuning for domain tasks.
+
+# Results
+Approach	Accuracy	RMSLE	GPU Memory	Notes
+Fine-Tuned QLoRA Model	75%	0.36	~8 GB	Captured domain-specific patterns effectively
+GPT-4o mini + RAG	69.2%	0.41	N/A	Weaker on domain-specific structure
 
 ## Requirements
 
