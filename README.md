@@ -32,11 +32,6 @@ Custom Fine-Tuning — Optimized model performance using AdamW, rank = 32, alpha
 
 Comparative Study — Evaluated Fine-Tuning vs. RAG-based retrieval, demonstrating the strength of targeted fine-tuning for domain tasks.
 
-# Results
-Approach	Accuracy	RMSLE	GPU Memory	Notes
-Fine-Tuned QLoRA Model	75%	0.36	~8 GB	Captured domain-specific patterns effectively
-GPT-4o mini + RAG	69.2%	0.41	N/A	Weaker on domain-specific structure
-
 ## Requirements
 
 - Python 3.8 or later
