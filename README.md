@@ -138,5 +138,3 @@ Configurable parameters:
 - Chunk size for processing
 - Chunk overlap for context preservation
 
-## Development
-
