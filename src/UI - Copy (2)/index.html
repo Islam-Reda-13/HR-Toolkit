@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HR Knowledge Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="not-logged-in">
+  <div id="login-screen-wrapper">
+    <div id="login-illustration"></div>
+
+    <div class="login-card">
+      <div class="login-card-header">
+        <div class="login-logo-pulse">
+          <span class="pulse-dot"></span>
+        </div>
+        <div>
+          <h2 id="authTitle">Welcome Back</h2>
+          <p class="login-subtitle">
+            Sign in to manage your HR knowledge base and AI assistant.
+          </p>
+        </div>
+      </div>
+
+      <div id="authError" class="auth-message auth-error" style="display:none;"></div>
+      <div id="authSuccess" class="auth-message auth-success" style="display:none;"></div>
+
+      <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            id="username"
+            type="text"
+            autocomplete="username"
+            placeholder="admin"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">
+          <span>Sign In</span>
+          <span class="btn-glow-dot"></span>
+        </button>
+      </form>
+
+      <form id="signupForm" class="auth-form" style="display:none;" onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label for="newUsername">New Username</label>
+          <input
+            id="newUsername"
+            type="text"
+            autocomplete="off"
+            placeholder="Choose a username"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="newPassword">Password</label>
+          <input
+            id="newPassword"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Create a password"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Repeat your password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">
+          <span>Create Account</span>
+          <span class="btn-glow-dot"></span>
+        </button>
+      </form>
+
+      <div class="auth-toggle">
+        <span id="toggleText">Don't have an account?</span>
+        <button type="button" id="authToggleBtn" class="link-button" onclick="toggleAuthMode()">
+          Sign Up
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <header class="top-nav">
+    <div class="nav-left">
+      <div class="brand-pill">
+        <span class="brand-dot"></span>
+        <span class="brand-text">HR Portal</span>
+      </div>
+      <span class="brand-sub">Vector Knowledge Base &amp; AI</span>
+    </div>
+
+    <div class="nav-links">
+      <button class="tab active" data-tab="info">System Info</button>
+      <button class="tab" data-tab="upload">Upload</button>
+      <button class="tab" data-tab="process">Process</button>
+      <button class="tab" data-tab="push">Push Index</button>
+      <button class="tab" data-tab="index">Index Info</button>
+      <button class="tab" data-tab="search">Search</button>
+      <button class="tab" data-tab="answer">Ask AI</button>
+      <button class="tab" data-tab="hr-email">HR Emails</button>
+      <button class="tab" data-tab="web-scraping">Web Summary</button>
+    </div>
+
+    <button id="logoutBtn" class="logout-btn" onclick="handleLogout()">
+      Logout
+    </button>
+  </header>
+
+  <main class="container">
+    <section class="project-id-section">
+      <div>
+        <p class="project-label">Project ID</p>
+        <p class="project-helper">
+          All operations will use this project ID for your vector DB.
+        </p>
+      </div>
+      <div class="project-input-wrapper">
+        <input
+          id="globalProjectId"
+          type="text"
+          value="2"
+          class="project-id-input"
+        />
+      </div>
+    </section>
+
+    <section id="info" class="tab-content active">
+      <div class="section-header">
+        <h2>System Status</h2>
+        <p>
+          Monitor the health and versioning of your backend services.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3>Service Status</h3>
+            <span class="pill pill-soft">Health Check</span>
+          </div>
+          <p class="card-description">
+            Run a real-time health check on your backend.
+          </p>
+
+          <button type="button" class="btn btn-primary" onclick="getSystemInfo()">
+            <span>Fetch System Info</span>
+          </button>
+
+          <div id="info-loading" class="loading">
+            <div class="spinner"></div>
+            <p>Fetching stats...</p>
+          </div>
+          <div id="info-response" class="response"></div>
+        </div>
+
+        <div class="card card-gradient">
+          <div class="card-header">
+            <h3>Workflow</h3>
+            <span class="pill pill-outline">Pipeline</span>
+          </div>
+          <ul class="timeline">
+            <li>
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h4>Upload</h4>
+                <p>Upload files to the server.</p>
+              </div>
+            </li>
+            <li>
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h4>Process</h4>
+                <p>Chunk text into segments.</p>
+              </div>
+            </li>
+            <li>
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h4>Push</h4>
+                <p>Embed chunks into vector DB.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="upload" class="tab-content">
+      <div class="section-header">
+        <h2>Upload New Data</h2>
+        <p>
+          Upload documents (PDF, TXT, MD) or folders to the repository.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="upload-mode-toggle">
+          <button class="mode-btn active" data-mode="file" onclick="switchUploadMode('file')">
+            <span>Single File</span>
+          </button>
+          <button class="mode-btn" data-mode="folder" onclick="switchUploadMode('folder')">
+            <span>Folder</span>
+          </button>
+        </div>
+
+        <form onsubmit="uploadFile(event)">
+          <div id="fileDropArea" class="file-drop-area">
+            <input
+              id="fileUpload"
+              type="file"
+              class="file-input-hidden"
+              onchange="updateFileName(this)"
+              required
+            />
+            <div class="file-drop-inner">
+              <div class="file-icon-orbit"></div>
+              <p id="dropAreaTitle" class="file-drop-title">
+                Drag &amp; Drop Single File
+              </p>
+              <p id="fileLimits" class="file-drop-subtitle">
+                PDF, TXT, MD up to 10MB
+              </p>
+              <p id="fileName" class="file-drop-filename"></p>
+              <button type="button" class="btn btn-ghost" id="fileBrowseBtn">
+                Browse
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <span>Upload</span>
+          </button>
+        </form>
+
+        <div id="upload-loading" class="loading">
+          <div class="spinner"></div>
+          <p>Uploading files...</p>
+        </div>
+        <div id="upload-response" class="response"></div>
+      </div>
+    </section>
+
+    <section id="process" class="tab-content">
+      <div class="section-header">
+        <h2>Process Raw Data</h2>
+        <p>
+          Split uploaded documents into chunks suitable for indexing.
+        </p>
+      </div>
+
+      <div class="card">
+        <form onsubmit="processFiles(event)">
+          <div class="grid-2">
+              <div class="form-group">
+                <label for="fileId">Specific File ID (Optional)</label>
+                <input
+                  id="fileId"
+                  type="text"
+                  placeholder="e.g., f1a2b3c4"
+                />
+              </div>
+              <div class="form-group">
+                <label for="chunkSize">Chunk Size (Tokens)</label>
+                <input
+                  id="chunkSize"
+                  type="number"
+                  min="50"
+                  max="1024"
+                  value="256"
+                  required
+                />
+              </div>
+          </div>
+          <div class="grid-2">
+              <div class="form-group">
+                <label for="overlapSize">Overlap Size (Tokens)</label>
+                <input
+                  id="overlapSize"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value="20"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="doReset">Reset Chunks?</label>
+                <select id="doReset" required>
+                    <option value="0">No (Append)</option>
+                    <option value="1">Yes (Clear All)</option>
+                </select>
+              </div>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span>Process Data</span>
+          </button>
+        </form>
+
+        <div id="process-loading" class="loading">
+          <div class="spinner"></div>
+          <p>Processing chunks...</p>
+        </div>
+        <div id="process-response" class="response"></div>
+      </div>
+    </section>
+
+    <section id="push" class="tab-content">
+      <div class="section-header">
+        <h2>Push Chunks to Index</h2>
+        <p>
+          Embed the processed data chunks and store them in the vector index.
+        </p>
+      </div>
+
+      <div class="card">
+        <form onsubmit="pushToIndex(event)">
+          <div class="form-group">
+            <label for="pushReset">Reset Index?</label>
+            <select id="pushReset" required>
+                <option value="0">No (Append)</option>
+                <option value="1">Yes (Clear All)</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span>Push to Vector Index</span>
+          </button>
+        </form>
+
+        <div id="push-loading" class="loading">
+          <div class="spinner"></div>
+          <p>Embedding chunks and updating index...</p>
+        </div>
+        <div id="push-response" class="response"></div>
+      </div>
+    </section>
+
+    <section id="index" class="tab-content">
+      <div class="section-header">
+        <h2>Vector Index Information</h2>
+        <p>
+          Check the health, statistics, and document count of the vector index.
+        </p>
+      </div>
+
+      <div class="card">
+        <button type="button" class="btn btn-primary" onclick="getIndexInfo()">
+          <span>Get Index Info</span>
+        </button>
+
+        <div id="index-info-loading" class="loading">
+          <div class="spinner"></div>
+          <p>Fetching index information...</p>
+        </div>
+        <div id="index-info-response" class="response"></div>
+      </div>
+    </section>
+
+    <section id="search" class="tab-content">
+      <div class="section-header">
+        <h2>Search Knowledge Base</h2>
+        <p>
+          Retrieve raw segments from the knowledge base using semantic vector search.
+        </p>
+      </div>
+
+      <div class="card">
+        <form onsubmit="searchIndex(event)">
+          <div class="form-group">
+            <label for="searchText">Search Query</label>
+            <textarea
+              id="searchText"
+              rows="3"
+              placeholder="e.g. company remote work policy"
+              required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="searchLimit">Max Results</label>
+            <input
+              id="searchLimit"
+              type="number"
+              min="1"
+              max="20"
+              value="5"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span>Search</span>
+          </button>
+        </form>
+
+        <div id="search-loading" class="loading">
+          <div class="spinner"></div>
+          <p>Searching vectors...</p>
+        </div>
+        <div id="search-response" class="response"></div>
+      </div>
+    </section>
+
+    <section id="answer" class="tab-content">
+      <div class="section-header">
+        <h2>Ask AI Assistant</h2>
+        <p>
+          Ask questions and get answers based on your data.
+        </p>
+      </div>
+
+      <div class="card">
+        <form onsubmit="askQuestion(event)">
+          <div class="form-group">
+            <label for="questionText">Your Question</label>
+            <textarea
+              id="questionText"
+              rows="4"
+              placeholder="e.g. Give me a summary of our parental leave policy..."
+              required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="answerLimit">Reference Segments</label>
+            <input
+                id="answerLimit"
+                type="number"
+                value="5"
+                min="1"
+                max="20"
+                required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span>Generate Answer</span>
+          </button>
+        </form>
+
+        <div id="answer-loading" class="loading">
+          <div class="spinner"></div>
+          <p>Analyzing and generating response...</p>
+        </div>
+        <div id="answer-response" class="response"></div>
+      </div>
+    </section>
+
+    <section id="hr-email" class="tab-content">
+      <div class="section-header">
+        <h2>HR Email Generator</h2>
+        <p>
+          Draft professional HR correspondence instantly.
+        </p>
+      </div>
+
+      <div class="card">
+        <form onsubmit="generateHREmail(event)">
+          <div class="grid-2">
+              <div class="form-group">
+                <label for="emailType">Email Type</label>
+                <select id="emailType" required>
+                    <option value="interview_invitation">Interview Invitation</option>
+                    <option value="offer_letter">Job Offer Letter</option>
+                    <option value="rejection">Rejection Email</option>
+                    <option value="onboarding">New Employee Onboarding</option>
+                    <option value="performance_review">Performance Review Invitation</option>
+                    <option value="termination">Employment Termination</option>
+                    <option value="reminder">General Reminder</option>
+                    <option value="announcement">Company Announcement</option>
+                    <option value="appreciation">Employee Appreciation</option>
+                    <option value="custom">Custom Email</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="recipientName">Recipient Name</label>
+                <input
+                    id="recipientName"
+                    type="text"
+                    placeholder="e.g., John Doe"
+                    required
+                />
+              </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="emailContext">Context / Details</label>
+            <textarea
+              id="emailContext"
+              rows="4"
+              placeholder="e.g., Position: Senior Software Engineer, Date: January 15th..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="emailTone">Tone</label>
+            <select id="emailTone" required>
+                <option value="professional">Professional</option>
+                <option value="friendly">Friendly</option>
+                <option value="formal">Formal</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <span>Generate Email</span>
+          </button>
+        </form>
+
+        <div id="hr-email-loading" class="loading">
+          <div class="spinner"></div>
+          <p>Drafting email...</p>
+        </div>
+        <div id="hr-email-response" class="response"></div>
+      </div>
+    </section>
+
+    <section id="web-scraping" class="tab-content">
+      <div class="section-header">
+        <h2>Website Summary Generator</h2>
+        <p>
+          Extract insights from external company websites.
+        </p>
+      </div>
+
+      <div class="card">
+        <form onsubmit="summarizeWebsite(event)">
+          <div class="form-group">
+             <label for="companyName">Company Name</label>
+             <input type="text" id="companyName" placeholder="e.g., Example Corp" required>
+          </div>
+          <div class="form-group">
+            <label for="websiteUrl">Website URL</label>
+            <input
+              id="websiteUrl"
+              type="url"
+              placeholder="https://example.com"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span>Generate Summary</span>
+          </button>
+        </form>
+
+        <div id="web-scraping-loading" class="loading">
+          <div class="spinner"></div>
+          <p>Scraping content...</p>
+        </div>
+        <div id="web-scraping-response" class="response"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    // Auto-select first tab on load
+    document.addEventListener('DOMContentLoaded', () => {
+        const defaultTab = document.querySelector('.tab.active');
+        if (defaultTab) defaultTab.click(); 
+    });
+  </script>
+</body>
+</html>
